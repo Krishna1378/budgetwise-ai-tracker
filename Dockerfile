@@ -1,24 +1,47 @@
-# Use a slim, stable Python base image
+# Use a stable, slim Python base image
 FROM python:3.10-slim
 
-# 1. Install system dependencies needed for pandas/numpy compilation
-# The build-essential package includes the C/C++ compiler
+# Set environment variables to prevent buffering issues
+ENV PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1 \
+    DEBIAN_FRONTEND=noninteractive
+
+# 1. Install system dependencies for compiling packages like pandas/numpy
 RUN apt-get update && \
-    apt-get install -y build-essential python3-dev && \
-    rm -rf /var/lib/apt/lists/*
+    apt-get install -y --no-install-recommends \
+        build-essential \
+        python3-dev \
+        wget \
+        curl \
+        git \
+        libatlas-base-dev \
+        gfortran \
+        libblas-dev \
+        liblapack-dev \
+        && rm -rf /var/lib/apt/lists/*
 
 # Set the working directory for the application
 WORKDIR /app
 
-# 2. Copy requirements and install Python dependencies
-# This is where pandas will now compile successfully
+# 2. Upgrade pip, setuptools, and wheel first
+RUN pip install --upgrade pip setuptools wheel
+
+# 3. Copy requirements file and install Python dependencies
 COPY backend/requirements.txt requirements.txt
+
+# Separate installation for large packages like torch to avoid BrokenPipeError
+# Install torch CPU-only wheel (smaller, faster)
+RUN pip install --upgrade torch --index-url https://download.pytorch.org/whl/cpu
+
+# Now install the rest of the requirements
 RUN pip install --no-cache-dir -r requirements.txt
 
-# 3. Copy the rest of the backend code
+# 4. Copy the rest of the backend code
 COPY backend/ /app/backend/
 
-# 4. Set the startup command
-# Use Gunicorn for production if possible, otherwise use python app.py
-# Assuming your app.py is run directly
+# 5. Expose the port (if using Flask/FastAPI)
+EXPOSE 5000
+
+# 6. Set the startup command
+# For production, you can replace this with Gunicorn: ["gunicorn", "backend.app:app"]
 CMD ["python", "backend/app.py"]
