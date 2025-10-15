@@ -19,4 +19,4 @@ langchain-google-genai==0.0.9
 langchain-chroma==0.1.1
 chromadb==0.4.24
 sentence-transformers==2.7.0
-Cython==0.30.2       # added explicitly to help any compilation
+Cython     # added explicitly to help any compilation
