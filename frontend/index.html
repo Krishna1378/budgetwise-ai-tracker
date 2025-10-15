@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>BudgetWise Dashboard</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="style.css">
+  <!-- Chart.js for data visualization -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body class="dashboard-body">
+  <div class="dashboard-container">
+    <nav class="sidebar">
+      <div class="sidebar-header">
+        <h1 class="logo">BudgetWise</h1>
+      </div>
+      <ul class="sidebar-menu">
+        <li class="active"><a href="#dashboard"><i class="fas fa-home"></i> Dashboard</a></li>
+        <li><a href="#transactions"><i class="fas fa-exchange-alt"></i> Transactions</a></li>
+        <li><a href="#analytics"><i class="fas fa-chart-pie"></i> Analytics</a></li>
+        <li><a href="#assistant"><i class="fas fa-robot"></i> Assistant</a></li>
+        <li><a href="#settings"><i class="fas fa-cog"></i> Settings</a></li>
+      </ul>
+      <div class="sidebar-footer">
+        <button id="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+      </div>
+    </nav>
+
+    <div class="main-content">
+      <header class="dashboard-header">
+        <div class="header-search">
+          <i class="fas fa-search"></i>
+          <input type="text" placeholder="Search transactions...">
+        </div>
+        <div class="user-section">
+          <div class="notifications">
+            <i class="far fa-bell"></i>
+          </div>
+          <div class="user-profile">
+            <span>Welcome, <span id="username-display"></span></span>
+            <div class="user-avatar">
+              <i class="fas fa-user-circle"></i>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div class="dashboard-content">
+        <section id="dashboard" class="welcome-banner">
+          <div class="welcome-text">
+            <h2>Welcome back, <span id="username-display2"></span>!</h2>
+            <p>Here's a summary of your financial situation</p>
+          </div>
+          <div class="date-display">
+            <i class="far fa-calendar-alt"></i>
+            <span id="current-date"></span>
+          </div>
+        </section>
+
+        <section class="summary-section">
+          <div class="summary-cards">
+            <div class="card income">
+              <div class="card-icon">
+                <i class="fas fa-arrow-down"></i>
+              </div>
+              <div class="card-content">
+                <h3>Income</h3>
+                <p id="total-income">₹0.00</p>
+                <span class="card-period">Current Month</span>
+              </div>
+            </div>
+            <div class="card expense">
+              <div class="card-icon">
+                <i class="fas fa-arrow-up"></i>
+              </div>
+              <div class="card-content">
+                <h3>Expenses</h3>
+                <p id="total-expense">₹0.00</p>
+                <span class="card-period">Current Month</span>
+              </div>
+            </div>
+            <div class="card balance">
+              <div class="card-icon">
+                <i class="fas fa-wallet"></i>
+              </div>
+              <div class="card-content">
+                <h3>Balance</h3>
+                <p id="balance">₹0.00</p>
+                <span class="card-period">Current Status</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <div class="dashboard-grid">
+          <section id="analytics" class="charts-section">
+            <div class="section-header">
+              <h2><i class="fas fa-chart-pie"></i> Financial Analytics</h2>
+              <div class="section-actions">
+                <select id="chart-period">
+                  <option value="month">This Month</option>
+                  <option value="quarter">This Quarter</option>
+                  <option value="year">This Year</option>
+                  <option value="all">All Time</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="chart-grid">
+              <div class="chart-card">
+                <h3>Income vs Expenses</h3>
+                <div class="chart-container">
+                  <canvas id="income-expense-chart"></canvas>
+                </div>
+              </div>
+
+              <div class="chart-card">
+                <h3>Expense Categories</h3>
+                <div class="chart-container">
+                  <canvas id="expense-categories-chart"></canvas>
+                </div>
+              </div>
+
+              <div class="chart-card full-width">
+                <h3>Monthly Trend</h3>
+                <div class="chart-container">
+                  <canvas id="monthly-trend-chart"></canvas>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section id="transactions" class="add-transaction-section">
+            <div class="section-header">
+              <h2><i class="fas fa-plus-circle"></i> Add Transaction</h2>
+            </div>
+
+            <form id="expenseForm" class="transaction-form">
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="date">Date</label>
+                  <div class="input-with-icon">
+                    <i class="far fa-calendar"></i>
+                    <input type="date" id="date" required>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="type">Type</label>
+                  <div class="input-with-icon">
+                    <i class="fas fa-tag"></i>
+                    <select id="type">
+                      <option value="Expense">Expense</option>
+                      <option value="Income">Income</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="category">Category</label>
+                  <div class="input-with-icon">
+                    <i class="fas fa-folder"></i>
+                    <input type="text" id="category" placeholder="E.g., Food, Rent" required>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="amount">Amount</label>
+                  <div class="input-with-icon">
+                    <i class="fas fa-rupee-sign"></i>
+                    <input type="number" id="amount" placeholder="₹ 0.00" min="0.01" step="0.01" required>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="note">Note (Optional)</label>
+                <div class="input-with-icon">
+                  <i class="far fa-sticky-note"></i>
+                  <input type="text" id="note" placeholder="Any additional details">
+                </div>
+              </div>
+
+              <button type="submit" class="btn-primary"><i class="fas fa-plus"></i> Add Transaction</button>
+            </form>
+          </section>
+
+          <section class="transaction-history-section">
+            <div class="section-header">
+              <h2><i class="fas fa-history"></i> Transaction History</h2>
+              <div class="section-actions">
+                <div class="search-transactions">
+                  <input type="text" id="filter-transactions" placeholder="Filter transactions...">
+                  <i class="fas fa-filter"></i>
+                </div>
+              </div>
+            </div>
+
+            <div class="transaction-list-container">
+              <div class="transaction-list-header">
+                <span class="col-date">Date</span>
+                <span class="col-category">Category</span>
+                <span class="col-note">Note</span>
+                <span class="col-amount">Amount</span>
+                <span class="col-actions">Actions</span>
+              </div>
+
+              <ul id="expenseList" class="transaction-list"></ul>
+
+              <div class="transaction-list-footer">
+                <button id="load-more" class="btn-secondary">Load More</button>
+              </div>
+            </div>
+          </section>
+
+          <!-- Finance Assistant -->
+          <section class="transaction-history-section" id="assistant">
+            <div class="section-header">
+              <h2><i class="fas fa-robot"></i> Finance Assistant</h2>
+              <div class="section-actions">
+                <button id="clear-memory-btn" class="btn-secondary" title="Clear conversation history"><i
+                    class="fas fa-eraser"></i> Clear History</button>
+                <button id="build-index" class="btn-secondary"><i class="fas fa-sync-alt"></i> Build/Refresh
+                  Index</button>
+              </div>
+            </div>
+            <div class="chatbox">
+              <div id="chat-messages" class="chat-messages">
+                <div class="msg bot">
+                  <div class="bubble">👋 Welcome to Finance Assistant! I'm here to help you understand your finances
+                    better. I remember our conversation, so feel free to ask follow-up questions!</div>
+                </div>
+                <div class="msg bot">
+                  <div class="bubble">To get started, please click the "Build/Refresh Index" button above to analyze your transactions. Then you can ask me questions like:
+• "How much did I spend on food in August?"
+• "What's my spending trend this month?"
+• "Show me my highest expenses"
+• "Compare that to last month" (I'll remember the context!)</div>
+                </div>
+              </div>
+              <form id="chat-form" class="chat-input" onsubmit="return false;">
+                <input id="chat-text" type="text"
+                  placeholder="Ask about your finances (e.g., food in August, budget trend)..." required />
+                <button type="button" id="ask-btn" class="btn-primary" style="max-width:160px"><i
+                    class="fas fa-paper-plane"></i> Ask</button>
+              </form>
+            </div>
+          </section>
+
+          <!-- Settings Section -->
+          <section id="settings" class="transaction-history-section" style="display: none;">
+            <div class="section-header">
+              <h2><i class="fas fa-cog"></i> Settings</h2>
+            </div>
+            <div class="card">
+              <div class="card-content" style="padding: 30px; text-align: center;">
+                <i class="fas fa-tools" style="font-size: 48px; color: #9e9e9e; margin-bottom: 20px;"></i>
+                <h3>Settings</h3>
+                <p style="color: #757575;">Settings panel coming soon. You can manage your account preferences,
+                  notifications, and more here.</p>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="dashboard.js"></script>
+  <script src="langchain-chat.js"></script>
+</body>
+
+</html>
